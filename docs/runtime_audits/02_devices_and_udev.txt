@@ -1,0 +1,10 @@
+===== SERIAL DEVICES =====
+lrwxrwxrwx 1 root root         7 May  9 18:14 /dev/esp32_agv -> ttyACM0
+lrwxrwxrwx 1 root root         7 May  9 18:14 /dev/rplidar -> ttyUSB0
+crw-rw---- 1 root dialout 166, 0 May  9 18:14 /dev/ttyACM0
+crw-rw---- 1 root dialout 188, 0 May  9 18:14 /dev/ttyUSB0
+
+===== UDEV SERIAL BY ID =====
+total 0
+lrwxrwxrwx 1 root root 13 May  9 18:14 usb-Espressif_Systems_ESP32S3_DEV_F412FA571F68-if00 -> ../../ttyACM0
+lrwxrwxrwx 1 root root 13 May  9 18:14 usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0 -> ../../ttyUSB0

@@ -1,0 +1,420 @@
+===== SUPER LAUNCHER =====
+#!/usr/bin/env bash
+set -u
+
+CONTAINER="ros_agv_serial"
+YOLO_SCRIPT="$HOME/yolo_gst_csi.py"
+YOLO_VENV="$HOME/venvs/yolo_track"
+HOST_SHARE="$HOME/agv_share"
+JSON_FILE="$HOST_SHARE/latest.json"
+LOG_ROOT="$HOME/agv_logs"
+RUN_ID="$(date +%Y%m%d_%H%M%S)"
+RUN_DIR="$LOG_ROOT/run_$RUN_ID"
+
+YOLO_PID=""
+ROS_PID=""
+HOST_WATCHDOG_PID=""
+
+RVIZ_CONFIG="$HOME/agv_share/agv_nav2_slam.rviz"
+RVIZ_PID=""
+
+mkdir -p "$RUN_DIR"
+
+LAUNCHER_LOG="$RUN_DIR/launcher.log"
+YOLO_LOG="$RUN_DIR/yolo.log"
+ROS_LOG="$RUN_DIR/ros.log"
+
+log() {
+  echo "[$(date '+%F %T')] $*" | tee -a "$LAUNCHER_LOG"
+}
+
+cleanup() {
+  trap - INT TERM EXIT
+  log "Cierre solicitado. Deteniendo procesos..."
+
+  log "Cerrando RViz si está activo."
+  if [[ -n "${RVIZ_PID:-}" ]] && kill -0 "$RVIZ_PID" 2>/dev/null; then
+    kill -TERM "$RVIZ_PID" 2>/dev/null || true
+    sleep 2
+    kill -KILL "$RVIZ_PID" 2>/dev/null || true
+    wait "$RVIZ_PID" 2>/dev/null || true
+  fi
+  pkill -TERM -f "rviz2 -d $RVIZ_CONFIG" 2>/dev/null || true
+
+  log "Cerrando YOLO si está activo."
+  if [[ -n "${YOLO_PID:-}" ]] && kill -0 "$YOLO_PID" 2>/dev/null; then
+    kill -TERM "$YOLO_PID" 2>/dev/null || true
+    sleep 2
+    kill -KILL "$YOLO_PID" 2>/dev/null || true
+    wait "$YOLO_PID" 2>/dev/null || true
+  fi
+  pkill -TERM -f "$YOLO_SCRIPT" 2>/dev/null || true
+
+  log "Cerrando ROS launch por PGID si está activo."
+  docker exec "$CONTAINER" bash -lc 'if [[ -f /tmp/agv_ros_pgid ]]; then PGID="$(cat /tmp/agv_ros_pgid)"; if [[ "$PGID" =~ ^[0-9]+$ ]]; then kill -TERM -"$PGID" 2>/dev/null || true; sleep 3; kill -KILL -"$PGID" 2>/dev/null || true; fi; rm -f /tmp/agv_ros_pgid; fi' >>"$LAUNCHER_LOG" 2>&1 || true
+
+  if [[ -n "${ROS_PID:-}" ]] && kill -0 "$ROS_PID" 2>/dev/null; then
+    wait "$ROS_PID" 2>/dev/null || true
+  fi
+
+  log "Verificando procesos huérfanos."
+  ps aux | egrep 'ros2|rviz2|yolo_gst_csi|mega_super_launcher|agv_watchdog' | grep -v egrep >>"$LAUNCHER_LOG" 2>&1 || true
+
+  log "Launcher cerrado."
+}
+
+trap cleanup INT TERM EXIT
+
+log "Mega Super Launcher Host v1 iniciado."
+log "Logs: $RUN_DIR"
+
+if ! docker ps >/dev/null 2>&1; then
+  log "ERROR: Docker no responde sin sudo."
+  exit 1
+fi
+
+if [[ ! -f "$YOLO_SCRIPT" ]]; then
+  log "ERROR: No existe YOLO_SCRIPT: $YOLO_SCRIPT"
+  exit 1
+fi
+
+if [[ ! -d "$YOLO_VENV" ]]; then
+  log "ERROR: No existe YOLO_VENV: $YOLO_VENV"
+  exit 1
+fi
+
+if [[ ! -d "$HOST_SHARE" ]]; then
+  log "ERROR: No existe HOST_SHARE: $HOST_SHARE"
+  exit 1
+fi
+
+log "Arrancando/verificando contenedor: $CONTAINER"
+docker start "$CONTAINER" >>"$LAUNCHER_LOG" 2>&1 || {
+  log "ERROR: No se pudo arrancar contenedor $CONTAINER"
+  exit 1
+}
+
+log "Limpiando latest.json viejo si existe."
+rm -f "$JSON_FILE"
+
+log "Arrancando YOLO en host."
+(
+  cd "$YOLO_VENV" || exit 1
+  source bin/activate
+  python "$YOLO_SCRIPT"
+) >>"$YOLO_LOG" 2>&1 &
+YOLO_PID=$!
+
+log "Esperando latest.json fresco..."
+READY=0
+for i in {1..30}; do
+  if [[ -f "$JSON_FILE" ]]; then
+    AGE=$(( $(date +%s) - $(stat -c %Y "$JSON_FILE") ))
+    if [[ "$AGE" -le 2 ]]; then
+      READY=1
+      break
+    fi
+  fi
+  sleep 1
+done
+
+if [[ "$READY" -ne 1 ]]; then
+  log "ERROR: YOLO no generó latest.json fresco dentro del timeout."
+  exit 1
+fi
+
+log "latest.json fresco detectado. Arrancando ROS superlauncher dentro de Docker."
+
+docker exec "$CONTAINER" bash -lc '
+rm -f /tmp/agv_ros_pgid
+setsid bash -c '\''
+echo $$ >/tmp/agv_ros_pgid
+source /opt/ros/humble/setup.bash
+source /root/agv_ws/install/setup.bash
+exec ros2 launch agv_bringup system_nav2_slam.launch.py
+'\'' &
+CHILD_PID=$!
+wait "$CHILD_PID"
+' >>"$ROS_LOG" 2>&1 &
+ROS_PID=$!
+
+log "Esperando 5 segundos antes de abrir RViz."
+sleep 5
+
+if [[ -f "$RVIZ_CONFIG" ]]; then
+  log "Abriendo RViz con configuración: $RVIZ_CONFIG"
+  (
+    set +u
+    source /opt/ros/humble/setup.bash
+    source "$HOME/agv_ws/install/setup.bash"
+    set -u
+    rviz2 -d "$RVIZ_CONFIG"
+  ) >>"$RUN_DIR/rviz.log" 2>&1 &
+  RVIZ_PID=$!
+else
+  log "WARN: No existe RVIZ_CONFIG: $RVIZ_CONFIG. RViz no se abrirá."
+fi
+
+log "ROS superlauncher lanzado. PID ROS=$ROS_PID | PID YOLO=$YOLO_PID | PID RVIZ=$RVIZ_PID"
+log "Sistema vivo. Usa Ctrl+C para cerrar."
+
+wait "$ROS_PID"
+
+===== HOST WATCHDOG =====
+#!/usr/bin/env bash
+set -u
+
+CONTAINER="ros_agv_serial"
+SHARE_DIR="$HOME/agv_share"
+YOLO_FILE="$SHARE_DIR/latest.json"
+ROS_STATUS_FILE="$SHARE_DIR/agv_status.json"
+HOST_STATUS_FILE="$SHARE_DIR/agv_host_status.json"
+ESCALATION_FLAG="$SHARE_DIR/escalation_required.flag"
+
+
+LOG_DIR="$HOME/agv_logs/watchdog"
+LOG_FILE="$LOG_DIR/host_watchdog.log"
+
+INTERVAL=2
+YOLO_MAX_AGE=10
+ROS_STATUS_MAX_AGE=10
+
+mkdir -p "$LOG_DIR" "$SHARE_DIR"
+
+log() {
+  echo "$(date '+%F %T') $*" | tee -a "$LOG_FILE"
+}
+
+file_age_ok() {
+  local file="$1"
+  local max_age="$2"
+
+  [[ -f "$file" ]] || return 1
+
+  local age
+  age=$(( $(date +%s) - $(stat -c %Y "$file") ))
+
+  [[ "$age" -le "$max_age" ]]
+}
+
+container_running() {
+  docker inspect -f '{{.State.Running}}' "$CONTAINER" 2>/dev/null | grep -q true
+}
+
+yolo_running() {
+  pgrep -af "yolo_gst_csi.py" >/dev/null 2>&1
+}
+
+write_status() {
+  local state="$1"
+  local fault="$2"
+  local message="$3"
+  local docker_state="$4"
+  local yolo_proc="$5"
+  local yolo_json="$6"
+  local ros_json="$7"
+
+  cat > "$HOST_STATUS_FILE" <<JSON
+{
+  "state": "$state",
+  "fault": $fault,
+  "message": "$message",
+  "can_restart": false,
+  "timestamp": "$(date -Iseconds)",
+  "components": {
+    "docker": "$docker_state",
+    "yolo_process": "$yolo_proc",
+    "latest_json": "$yolo_json",
+    "ros_status_json": "$ros_json"
+  }
+}
+JSON
+}
+
+log "AGV host watchdog pasivo iniciado. No apaga, no reinicia, no mata procesos."
+
+while true; do
+  STATE="RUNNING"
+  FAULT="null"
+  MESSAGE="Host watchdog pasivo monitoreando."
+  DOCKER_STATE="OK"
+  YOLO_PROC="OK"
+  YOLO_JSON="OK"
+  ROS_JSON="OK"
+
+  container_running || DOCKER_STATE="FAIL"
+  yolo_running || YOLO_PROC="FAIL"
+  file_age_ok "$YOLO_FILE" "$YOLO_MAX_AGE" || YOLO_JSON="FAIL"
+  file_age_ok "$ROS_STATUS_FILE" "$ROS_STATUS_MAX_AGE" || ROS_JSON="FAIL"
+
+  if [[ "$DOCKER_STATE" == "FAIL" || "$YOLO_PROC" == "FAIL" || "$YOLO_JSON" == "FAIL" || "$ROS_JSON" == "FAIL" ]]; then
+    STATE="DEGRADED"
+    MESSAGE="Host watchdog detectó fallo externo. No ejecutó recovery, apagado ni kill."
+
+    if [[ "$DOCKER_STATE" == "FAIL" ]]; then
+      FAULT='"DOCKER_NOT_RUNNING"'
+    elif [[ "$YOLO_PROC" == "FAIL" ]]; then
+      FAULT='"YOLO_PROCESS_NOT_RUNNING"'
+    elif [[ "$YOLO_JSON" == "FAIL" ]]; then
+      FAULT='"YOLO_JSON_STALE_OR_MISSING"'
+    elif [[ "$ROS_JSON" == "FAIL" ]]; then
+      FAULT='"ROS_STATUS_STALE_OR_MISSING"'
+    fi
+
+    log "WARN state=$STATE fault=$FAULT docker=$DOCKER_STATE yolo_proc=$YOLO_PROC yolo_json=$YOLO_JSON ros_json=$ROS_JSON"
+  else
+    log "INFO state=$STATE docker=$DOCKER_STATE yolo_proc=$YOLO_PROC yolo_json=$YOLO_JSON ros_json=$ROS_JSON"
+  fi
+  if [[ -f "$ESCALATION_FLAG" ]]; then
+
+    log "CRITICAL escalation flag detectada. Ejecutando safe shutdown."
+
+    pkill -TERM -f "mega_super_launcher_host.sh"
+
+    rm -f "$ESCALATION_FLAG"
+
+  fi
+
+
+  write_status "$STATE" "$FAULT" "$MESSAGE" "$DOCKER_STATE" "$YOLO_PROC" "$YOLO_JSON" "$ROS_JSON"
+  sleep "$INTERVAL"
+done
+
+===== ROS WATCHDOG =====
+#!/usr/bin/env python3
+import json
+import os
+import time
+from datetime import datetime, timezone
+
+import rclpy
+from rclpy.node import Node
+from rclpy.executors import ExternalShutdownException
+from rclpy._rclpy_pybind11 import RCLError
+
+from sensor_msgs.msg import LaserScan, Imu
+from nav_msgs.msg import Odometry
+from tf2_msgs.msg import TFMessage
+from agv_msgs.msg import DetectionArray
+
+
+class AgvWatchdogNode(Node):
+    def __init__(self):
+        super().__init__('agv_watchdog_node')
+
+        self.status_path = '/mnt/agv_share/agv_status.json'
+
+        self.thresholds = {
+            'lidar': 5.0,
+            'esp32_imu': 5.0,
+            'odom': 5.0,
+            'tf': 5.0,
+            'perception': 10.0,
+        }
+
+        self.fail_counts = {key: 0 for key in self.thresholds}
+        self.last_seen = {key: None for key in self.thresholds}
+
+        self.create_subscription(LaserScan, '/scan', lambda msg: self.mark_seen('lidar'), 10)
+        self.create_subscription(Imu, '/imu', lambda msg: self.mark_seen('esp32_imu'), 10)
+        self.create_subscription(Odometry, '/odom', lambda msg: self.mark_seen('odom'), 10)
+        self.create_subscription(TFMessage, '/tf', lambda msg: self.mark_seen('tf'), 10)
+        self.create_subscription(DetectionArray, '/detections', lambda msg: self.mark_seen('perception'), 10)
+
+        self.timer = self.create_timer(1.0, self.evaluate)
+
+        self.get_logger().info('AGV ROS2 watchdog pasivo iniciado. No reinicia, no mata, no apaga.')
+
+    def mark_seen(self, component):
+        self.last_seen[component] = time.monotonic()
+        self.fail_counts[component] = 0
+
+    def evaluate(self):
+        now = time.monotonic()
+        components = {}
+        failed = []
+
+        for component, threshold in self.thresholds.items():
+            last = self.last_seen[component]
+
+            if last is None:
+                self.fail_counts[component] += 1
+                components[component] = 'WAITING'
+                failed.append(component)
+                continue
+
+            age = now - last
+            if age > threshold:
+                self.fail_counts[component] += 1
+                components[component] = 'FAIL'
+                failed.append(component)
+            else:
+                components[component] = 'OK'
+                self.fail_counts[component] = 0
+
+        max_fail = max(self.fail_counts.values())
+
+        if max_fail >= 3:
+            state = 'FAULT_PASSIVE'
+            fault = ','.join(failed) if failed else 'NONE'
+            can_restart = False
+            level = 'error'
+            message = 'Watchdog ROS2 pasivo confirmó fallo por contador. No ejecutó acciones destructivas.'
+        elif max_fail >= 2:
+            state = 'DEGRADED'
+            fault = ','.join(failed) if failed else 'NONE'
+            can_restart = False
+            level = 'warn'
+            message = 'Watchdog ROS2 pasivo detectó degradación temporal.'
+        else:
+            state = 'RUNNING' if not failed else 'STARTING'
+            fault = 'NONE' if not failed else ','.join(failed)
+            can_restart = True
+            level = 'info'
+            message = 'Watchdog ROS2 pasivo monitoreando.'
+
+        payload = {
+            'state': state,
+            'fault': fault,
+            'message': message,
+            'can_restart': can_restart,
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'components': components,
+            'fail_counts': self.fail_counts,
+        }
+
+        self.write_status(payload)
+
+        log_line = f"state={state} fault={fault} components={components}"
+        if level == 'error':
+            self.get_logger().error(log_line)
+        elif level == 'warn':
+            self.get_logger().warn(log_line)
+        else:
+            self.get_logger().info(log_line)
+
+    def write_status(self, payload):
+        tmp_path = self.status_path + '.tmp'
+        try:
+            with open(tmp_path, 'w') as f:
+                json.dump(payload, f, indent=2)
+            os.replace(tmp_path, self.status_path)
+        except Exception as exc:
+            self.get_logger().error(f'No se pudo escribir status JSON: {exc}')
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = AgvWatchdogNode()
+    try:
+        rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException, RCLError):
+        pass
+    finally:
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

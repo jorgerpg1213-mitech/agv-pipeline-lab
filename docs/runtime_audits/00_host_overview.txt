@@ -1,0 +1,31 @@
+===== FECHA =====
+Mon May 11 02:34:21 PM PDT 2026
+
+===== HOST =====
+ Static hostname: ubuntu
+       Icon name: computer
+      Machine ID: 5a9b71f23dac46c7be115953aefb0b04
+         Boot ID: 0686117ee14843fda9c6aa7d08ad3bce
+Operating System: Ubuntu 22.04.5 LTS
+          Kernel: Linux 5.15.185-tegra
+    Architecture: arm64
+ Hardware Vendor: NVIDIA
+  Hardware Model: NVIDIA Jetson Orin Nano Engineering Reference Developer Kit Super
+
+===== ARQUITECTURA =====
+Linux ubuntu 5.15.185-tegra #1 SMP PREEMPT Thu Jan 15 19:24:38 PST 2026 aarch64 aarch64 aarch64 GNU/Linux
+
+===== DIRECTORIOS AGV HOME =====
+drwxrwxr-x 67 padilla padilla     4096 May 11 14:21 /home/padilla/agv_logs
+drwxrwxr-x  2 padilla padilla     4096 May 11 14:34 /home/padilla/agv_pipeline_audit_for_claude
+-rw-rw-r--  1 padilla padilla    12743 May  9 16:21 /home/padilla/agv_pipeline_overview_for_gemini.txt
+drwxrwxr-x  2 padilla padilla     4096 May 11 14:23 /home/padilla/agv_share
+drwxrwxr-x  5 padilla padilla     4096 May  8 09:22 /home/padilla/agv_super_launcher
+drwxrwxr-x  7 padilla padilla     4096 May  2 14:58 /home/padilla/agv_ws
+drwxrwxr-x  4 padilla padilla     4096 Mar 30 14:30 /home/padilla/agv_ws_backup
+-rw-rw-r--  1 padilla padilla  5613764 Feb 24 11:32 /home/padilla/yolo11n.pt
+-rw-rw-r--  1 padilla padilla      610 Feb 24 12:04 /home/padilla/yolo_csi.py
+-rw-rw-r--  1 padilla padilla     4451 Mar  2 16:06 /home/padilla/yolo_gst_csi.py
+drwxrwxr-x  6 padilla padilla     4096 Feb 23 15:05 /home/padilla/yolo_test
+-rw-r--r--  1 root    root     6549796 Feb 24 09:54 /home/padilla/yolov8n.pt
+-rw-rw-r--  1 padilla padilla 22588772 Feb 28 09:47 /home/padilla/yolov8s.pt

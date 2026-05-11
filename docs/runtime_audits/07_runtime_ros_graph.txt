@@ -1,0 +1,9 @@
+===== ROS NODES =====
+
+===== ROS TOPICS =====
+/parameter_events
+/rosout
+
+===== ROS INTERFACES =====
+    agv_msgs/msg/Detection
+    agv_msgs/msg/DetectionArray

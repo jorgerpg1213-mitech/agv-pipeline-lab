@@ -1,0 +1,31 @@
+===== AGV LOG RUNS =====
+total 260
+drwxrwxr-x 2 padilla padilla 4096 May 11 14:21 run_20260511_142121
+drwxrwxr-x 2 padilla padilla 4096 May  9 12:43 run_20260509_124302
+drwxrwxr-x 2 padilla padilla 4096 May  9 12:40 run_20260509_124006
+drwxrwxr-x 2 padilla padilla 4096 May  9 12:22 run_20260509_122239
+drwxrwxr-x 2 padilla padilla 4096 May  9 11:30 run_20260509_113004
+drwxrwxr-x 2 padilla padilla 4096 May  9 11:25 run_20260509_112523
+drwxrwxr-x 2 padilla padilla 4096 May  9 11:11 run_20260509_111056
+drwxrwxr-x 2 padilla padilla 4096 May  8 13:50 run_20260508_134950
+drwxrwxr-x 2 padilla padilla 4096 May  8 09:40 run_20260508_094021
+drwxrwxr-x 2 padilla padilla 4096 May  8 09:30 run_20260508_093024
+drwxrwxr-x 2 padilla padilla 4096 May  8 09:25 run_20260508_092531
+drwxrwxr-x 2 padilla padilla 4096 May  8 09:16 run_20260508_091641
+drwxrwxr-x 2 padilla padilla 4096 May  7 17:10 run_20260507_171039
+drwxrwxr-x 2 padilla padilla 4096 May  7 16:57 run_20260507_165735
+drwxrwxr-x 2 padilla padilla 4096 May  7 12:07 run_20260507_120740
+drwxrwxr-x 2 padilla padilla 4096 May  7 10:15 run_20260507_101502
+drwxrwxr-x 2 padilla padilla 4096 May  7 09:46 run_20260507_094627
+drwxrwxr-x 2 padilla padilla 4096 May  7 09:42 run_20260507_094245
+drwxrwxr-x 2 padilla padilla 4096 May  7 09:39 run_20260507_093905
+
+===== CURRENT SHARE FILES =====
+total 36
+-rw-rw-r-- 1 padilla padilla  354 May 11 14:40 agv_host_status.json
+-rw-r--r-- 1 root    root     398 May 11 14:23 agv_status.json
+-rw-rw-r-- 1 padilla padilla 2286 May 11 14:23 latest.json
+-rw-r--r-- 1 root    root     398 May  5 13:24 agv_status.json.bak_fase2_20260505_133813
+-rw-rw-r-- 1 padilla padilla  306 May  5 12:22 agv_status.json.bak_pre_watchdog_20260505_122230
+-rw-rw-r-- 1 padilla padilla 7245 May  4 14:59 agv_nav2_slam.rviz
+-rw-rw-r-- 1 padilla padilla 7244 May  4 14:59 agv_nav2_slam.rviz.bak_20260504_145912

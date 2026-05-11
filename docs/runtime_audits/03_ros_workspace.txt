@@ -1,0 +1,196 @@
+===== WORKSPACE TREE =====
+/home/padilla/agv_ws/src
+├── agv_bringup
+│   ├── CMakeLists.txt
+│   ├── config
+│   │   ├── amcl.yaml
+│   │   ├── ekf.yaml
+│   │   ├── ekf.yaml.bak
+│   │   ├── ekf.yaml.bak_2026_04_09
+│   │   ├── ekf.yaml.bak_stage1
+│   │   ├── nav2_params_oficial.yaml
+│   │   ├── nav2_params.yaml
+│   │   ├── nav2_params.yaml.bak
+│   │   ├── nav2_params.yaml.bak_before_mppi
+│   │   ├── nav2_params.yaml.bak_before_smac
+│   │   ├── nav2_params.yaml.bak_localcostmap
+│   │   ├── nav2_params.yaml.bak_stage1
+│   │   ├── slam_toolbox_online.yaml
+│   │   └── slam_toolbox_online.yaml.bak_stage1
+│   ├── launch
+│   │   ├── localization.launch.py
+│   │   ├── navigation.launch.py
+│   │   ├── navigation.launch.py.bak
+│   │   ├── __pycache__
+│   │   ├── system.launch.py
+│   │   ├── system.launch.py.bak
+│   │   ├── system_nav2_slam.launch.py
+│   │   ├── system_nav2_slam.launch.py.bak_before_nav2_delay
+│   │   ├── system_nav2_slam.launch.py.bak_before_safety_integration
+│   │   ├── system_nav2_slam.launch.py.bak_before_safety_launcher
+│   │   ├── system_nav2_slam.launch.py.bak_before_static_tf_modern
+│   │   ├── system_nav2_slam.launch.py.bak_recovery_manager
+│   │   ├── system_nav2_slam.launch.py.bak_rplidar_udev_20260506_174832
+│   │   ├── system_nav2_slam.launch.py.bak_serialport_20260502_191832
+│   │   ├── system_nav2_slam.launch.py.bak_serialport_20260502_192046
+│   │   ├── system_nav2_slam.launch.py.bak_stage1
+│   │   ├── system_nav2_slam.launch.py.bak_tf_odom
+│   │   └── system_nav2_slam.launch.py.bak_watchdog_20260505_123314
+│   ├── maps
+│   │   ├── map.pgm
+│   │   └── map.yaml
+│   ├── package.xml
+│   ├── rviz
+│   └── scripts
+│       ├── agv_recovery_manager.py
+│       ├── agv_recovery_manager.py.bak_escalation_logic
+│       ├── agv_recovery_manager.py.bak_level2
+│       ├── agv_recovery_manager.py.bak_lidar
+│       ├── agv_watchdog_node.py
+│       ├── agv_watchdog_node.py.bak_escalation
+│       └── __pycache__
+├── agv_bringup_bak_pre_watchdog_20260505_192542.tar.gz
+├── agv_msgs
+│   ├── CMakeLists.txt
+│   ├── include
+│   │   └── agv_msgs
+│   ├── msg
+│   │   ├── DetectionArray.msg
+│   │   ├── Detection.msg
+│   │   └── Detection.msg.bak_before_direction
+│   ├── package.xml
+│   └── src
+├── esp32_bridge_node
+│   ├── esp32_bridge_node
+│   │   ├── esp32_bridge_node.py
+│   │   ├── esp32_bridge_node.py.bak
+│   │   ├── esp32_bridge_node.py.bak2
+│   │   ├── esp32_bridge_node.py.bak_esp32_udev_20260506_211331
+│   │   ├── __init__.py
+│   │   └── __pycache__
+│   ├── package.xml
+│   ├── resource
+│   │   └── esp32_bridge_node
+│   ├── setup.cfg
+│   ├── setup.py
+│   └── test
+│       ├── test_copyright.py
+│       ├── test_flake8.py
+│       └── test_pep257.py
+├── odom_node
+│   ├── odom_node
+│   │   ├── __init__.py
+│   │   ├── odom_node.py
+│   │   ├── odom_node.py.bak
+│   │   └── __pycache__
+│   ├── package.xml
+│   ├── resource
+│   │   └── odom_node
+│   ├── setup.cfg
+│   ├── setup.py
+│   └── test
+│       ├── test_copyright.py
+│       ├── test_flake8.py
+│       └── test_pep257.py
+├── perception_node
+│   ├── package.xml
+│   ├── perception_node
+│   │   ├── __init__.py
+│   │   ├── perception_node.py
+│   │   ├── perception_node.py.bak_before_direction
+│   │   └── __pycache__
+│   ├── resource
+│   │   └── perception_node
+│   ├── setup.cfg
+│   ├── setup.py
+│   └── test
+│       ├── test_copyright.py
+│       ├── test_flake8.py
+│       └── test_pep257.py
+├── rplidar_ros
+│   ├── CHANGELOG.rst
+│   ├── CMakeLists.txt
+│   ├── debian
+│   │   └── udev
+│   ├── include
+│   │   ├── rplidar_node.hpp
+│   │   └── visibility.h
+│   ├── launch
+│   │   ├── rplidar_a1_launch.py
+│   │   ├── rplidar_a2m12_launch.py
+│   │   ├── rplidar_a2m7_launch.py
+│   │   ├── rplidar_a2m8_launch.py
+│   │   ├── rplidar_a3_launch.py
+│   │   ├── rplidar_c1_launch.py
+│   │   ├── rplidar_s1_launch.py
+│   │   ├── rplidar_s1_tcp_launch.py
+│   │   ├── rplidar_s2e_launch.py
+│   │   ├── rplidar_s2_launch.py
+│   │   ├── rplidar_s3_launch.py
+│   │   ├── rplidar_t1_launch.py
+│   │   ├── view_rplidar_a1_launch.py
+│   │   ├── view_rplidar_a2m12_launch.py
+│   │   ├── view_rplidar_a2m7_launch.py
+│   │   ├── view_rplidar_a2m8_launch.py
+│   │   ├── view_rplidar_a3_launch.py
+│   │   ├── view_rplidar_c1_launch.py
+│   │   ├── view_rplidar_s1_launch.py
+│   │   ├── view_rplidar_s1_tcp_launch.py
+│   │   ├── view_rplidar_s2e_launch.py
+│   │   ├── view_rplidar_s2_launch.py
+│   │   ├── view_rplidar_s3_launch.py
+│   │   └── view_rplidar_t1_launch.py
+│   ├── LICENSE
+│   ├── package.xml
+│   ├── README.md
+│   ├── rplidar_A1.png
+│   ├── rplidar_A2.png
+│   ├── rviz
+│   │   └── rplidar_ros.rviz
+│   ├── scripts
+│   │   ├── create_udev_rules.sh
+│   │   ├── delete_udev_rules.sh
+│   │   └── rplidar.rules
+│   ├── sdk
+│   │   ├── include
+│   │   ├── Makefile
+│   │   └── src
+│   └── src
+│       ├── rplidar_client.cpp
+│       └── rplidar_node.cpp
+└── safety_policy_node
+    ├── package.xml
+    ├── package.xml.bak_before_cmdvel_filter
+    ├── resource
+    │   └── safety_policy_node
+    ├── safety_policy_node
+    │   ├── __init__.py
+    │   ├── __pycache__
+    │   ├── safety_policy_node.py
+    │   └── safety_policy_node.py.bak_before_cmdvel_filter
+    ├── setup.cfg
+    ├── setup.py
+    └── test
+        ├── test_copyright.py
+        ├── test_flake8.py
+        └── test_pep257.py
+
+43 directories, 131 files
+
+===== COLCON PACKAGES =====
+agv_bringup	src/agv_bringup	(ros.ament_cmake)
+agv_msgs	src/agv_msgs	(ros.ament_cmake)
+esp32_bridge_node	src/esp32_bridge_node	(ros.ament_python)
+odom_node	src/odom_node	(ros.ament_python)
+perception_node	src/perception_node	(ros.ament_python)
+rplidar_ros	src/rplidar_ros	(ros.ament_cmake)
+safety_policy_node	src/safety_policy_node	(ros.ament_python)
+
+===== COLCON GRAPH =====
+agv_bringup         +      
+agv_msgs             +    *
+esp32_bridge_node     +    
+odom_node              +   
+perception_node         +  
+rplidar_ros              + 
+safety_policy_node        +

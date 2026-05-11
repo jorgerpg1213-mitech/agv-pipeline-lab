@@ -1,0 +1,38 @@
+===== TOPIC HZ =====
+
+===== WATCHDOG STATUS =====
+{
+  "state": "RUNNING",
+  "fault": "NONE",
+  "message": "Watchdog ROS2 pasivo monitoreando.",
+  "can_restart": true,
+  "timestamp": "2026-05-11T21:23:23.546579+00:00",
+  "components": {
+    "lidar": "OK",
+    "esp32_imu": "OK",
+    "odom": "OK",
+    "tf": "OK",
+    "perception": "OK"
+  },
+  "fail_counts": {
+    "lidar": 0,
+    "esp32_imu": 0,
+    "odom": 0,
+    "tf": 0,
+    "perception": 0
+  }
+}
+===== HOST WATCHDOG STATUS =====
+{
+  "state": "DEGRADED",
+  "fault": "YOLO_PROCESS_NOT_RUNNING",
+  "message": "Host watchdog detectó fallo externo. No ejecutó recovery, apagado ni kill.",
+  "can_restart": false,
+  "timestamp": "2026-05-11T14:36:50-07:00",
+  "components": {
+    "docker": "OK",
+    "yolo_process": "FAIL",
+    "latest_json": "FAIL",
+    "ros_status_json": "FAIL"
+  }
+}

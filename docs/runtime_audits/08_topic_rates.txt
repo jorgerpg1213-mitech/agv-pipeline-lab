@@ -1,0 +1,5 @@
+===== SCAN HZ =====
+WARNING: topic [/scan] does not appear to be published yet
+
+===== IMU HZ =====
+WARNING: topic [/imu] does not appear to be published yet
