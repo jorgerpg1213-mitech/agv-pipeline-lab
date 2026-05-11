@@ -1,4 +1,4 @@
-# AGV Pipeline Laboratory Baseline v1
+# AGV Pipeline Baseline Baseline v1
 
 ## Overview
 
@@ -23,4 +23,4 @@ Baseline v1 frozen snapshot.
 
 ## Notes
 
-This repository represents a frozen laboratory baseline before future refactors, Isaac integration, and multi-machine scalability work.
+This repository represents a frozen baseline baseline before future refactors, Isaac integration, and multi-machine scalability work.
