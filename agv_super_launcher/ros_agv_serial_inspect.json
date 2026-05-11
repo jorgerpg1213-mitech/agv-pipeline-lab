@@ -1,0 +1,240 @@
+[
+    {
+        "Id": "09af2f1fe255cc1ae2ba55061d8e2e46ee214818f5b995f8c205b129be1161e8",
+        "Created": "2026-04-10T23:33:01.296373009Z",
+        "Path": "/ros_entrypoint.sh",
+        "Args": [
+            "bash"
+        ],
+        "State": {
+            "Status": "exited",
+            "Running": false,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 0,
+            "ExitCode": 137,
+            "Error": "error gathering device information while adding custom device \"/dev/ttyUSB0\": no such file or directory",
+            "StartedAt": "2026-05-06T16:21:05.638569549Z",
+            "FinishedAt": "2026-05-06T17:55:04.656670528Z"
+        },
+        "Image": "sha256:c4492640c45a0ed6d9d1577ab9c9422eef298d6fe6ad7c5c5ad7baeb45987235",
+        "ResolvConfPath": "/var/lib/docker/containers/09af2f1fe255cc1ae2ba55061d8e2e46ee214818f5b995f8c205b129be1161e8/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/09af2f1fe255cc1ae2ba55061d8e2e46ee214818f5b995f8c205b129be1161e8/hostname",
+        "HostsPath": "/var/lib/docker/containers/09af2f1fe255cc1ae2ba55061d8e2e46ee214818f5b995f8c205b129be1161e8/hosts",
+        "LogPath": "/var/lib/docker/containers/09af2f1fe255cc1ae2ba55061d8e2e46ee214818f5b995f8c205b129be1161e8/09af2f1fe255cc1ae2ba55061d8e2e46ee214818f5b995f8c205b129be1161e8-json.log",
+        "Name": "/ros_agv_serial",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/padilla/agv_ws:/root/agv_ws",
+                "/home/padilla/agv_share:/mnt/agv_share"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "bridge",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                20,
+                80
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": [],
+            "BlkioDeviceWriteBps": [],
+            "BlkioDeviceReadIOps": [],
+            "BlkioDeviceWriteIOps": [],
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [
+                {
+                    "PathOnHost": "/dev/ttyACM0",
+                    "PathInContainer": "/dev/ttyACM0",
+                    "CgroupPermissions": "rwm"
+                },
+                {
+                    "PathOnHost": "/dev/ttyUSB0",
+                    "PathInContainer": "/dev/ttyUSB0",
+                    "CgroupPermissions": "rwm"
+                }
+            ],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": [],
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware",
+                "/sys/devices/virtual/powercap"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "ID": "09af2f1fe255cc1ae2ba55061d8e2e46ee214818f5b995f8c205b129be1161e8",
+                "LowerDir": "/var/lib/docker/overlay2/ad6d9ae612e6845399486d956b0737615fbe389d6f9bbc56aecdc0482d2db8c1-init/diff:/var/lib/docker/overlay2/f79fe10449bd640dc761f04f5750f1cb46d2f88f96d026799df1885316b857d6/diff:/var/lib/docker/overlay2/9d1b77f692c81712704f6d3baa379dc789308c00f105543b3b261cffaac9a76d/diff:/var/lib/docker/overlay2/c3ca443c147876822a15e4191e04be38829abb1e5fcd2e61262804f64664b5e7/diff:/var/lib/docker/overlay2/67852f11af2e6e9abb274b07aa3744543c41b5d6b2214280a30ce600a5a2d4ed/diff:/var/lib/docker/overlay2/196be87daf3afb4691529c52d6786674f7d09972bf8af0c648ec577628a295af/diff:/var/lib/docker/overlay2/405b6fb9e9c9ee6d1d6262d6f83c78162d4972521557cdef099a01bef9e648c4/diff:/var/lib/docker/overlay2/315a4734cd3e32cea9bf96afbf35136707c38444f2312b642d657745d05cbb32/diff:/var/lib/docker/overlay2/5bcb45f3d500aa04a0eda27cdcb580bad04cac12513aa291d331719e2168be54/diff:/var/lib/docker/overlay2/8bbcba28415960722244cfb1bd33121fcd7e368e68330d969aaf08e6a8fdf9b5/diff:/var/lib/docker/overlay2/3e4706ea28f8118797093f7ba5a9235885cc010fde2e9fc66f1d6f8bd30ccf7d/diff",
+                "MergedDir": "/var/lib/docker/overlay2/ad6d9ae612e6845399486d956b0737615fbe389d6f9bbc56aecdc0482d2db8c1/merged",
+                "UpperDir": "/var/lib/docker/overlay2/ad6d9ae612e6845399486d956b0737615fbe389d6f9bbc56aecdc0482d2db8c1/diff",
+                "WorkDir": "/var/lib/docker/overlay2/ad6d9ae612e6845399486d956b0737615fbe389d6f9bbc56aecdc0482d2db8c1/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/padilla/agv_share",
+                "Destination": "/mnt/agv_share",
+                "Mode": "",
+                "RW": true,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/home/padilla/agv_ws",
+                "Destination": "/root/agv_ws",
+                "Mode": "",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "09af2f1fe255",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "LC_ALL=C.UTF-8",
+                "ROS_DISTRO=humble"
+            ],
+            "Cmd": [
+                "bash"
+            ],
+            "Image": "ros:humble-ros-base",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": [
+                "/ros_entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "org.opencontainers.image.ref.name": "ubuntu",
+                "org.opencontainers.image.version": "22.04"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "",
+            "SandboxKey": "",
+            "Ports": {},
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "MacAddress": "",
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "d88c87f76d06a86b8ed9e5d34e771a93ee2eaad8b11733c9709e126b7659ff9f",
+                    "EndpointID": "",
+                    "Gateway": "",
+                    "IPAddress": "",
+                    "IPPrefixLen": 0,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": null
+                }
+            }
+        }
+    }
+]
