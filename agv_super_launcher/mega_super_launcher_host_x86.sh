@@ -48,7 +48,8 @@ cleanup() {
     kill -KILL "$YOLO_PID" 2>/dev/null || true
     wait "$YOLO_PID" 2>/dev/null || true
   fi
-  pkill -TERM -f "$YOLO_SCRIPT" 2>/dev/null || true
+  pkill -TERM -f "$YOLO_SCRIPT" 2/dev/null || true
+  docker exec "$CONTAINER" bash -lc "pkill -f agv_recovery_manager" 2>/dev/null || true
 
   log "Cerrando ROS launch por PGID si está activo."
   docker exec "$CONTAINER" bash -lc 'if [[ -f /tmp/agv_ros_pgid ]]; then PGID="$(cat /tmp/agv_ros_pgid)"; if [[ "$PGID" =~ ^[0-9]+$ ]]; then kill -TERM -"$PGID" 2>/dev/null || true; sleep 3; kill -KILL -"$PGID" 2>/dev/null || true; fi; rm -f /tmp/agv_ros_pgid; fi' >>"$LAUNCHER_LOG" 2>&1 || true
@@ -91,7 +92,9 @@ if [[ ! -d "$HOST_SHARE" ]]; then
 fi
 
 log "Arrancando/verificando contenedor: $CONTAINER"
-docker start "$CONTAINER" >>"$LAUNCHER_LOG" 2>&1 || {
+docker restart "$CONTAINER" >>"$LAUNCHER_LOG" 2>&1 || {
+
+docker exec "$CONTAINER" bash -lc "pkill -f agv_recovery_manager 2>/dev/null; pkill -f rplidar_node 2>/dev/null; true"
   log "ERROR: No se pudo arrancar contenedor $CONTAINER"
   exit 1
 }
@@ -148,6 +151,7 @@ sleep 5
 log "Arrancando motor RPLidar..."
 docker exec "$CONTAINER" bash -lc "source /opt/ros/humble/setup.bash && ros2 service call /start_motor std_srvs/srv/Empty" >>"$LAUNCHER_LOG" 2>&1 || true
 log "Motor RPLidar lanzado."
+
 
 if [[ -f "$RVIZ_CONFIG" ]]; then
   log "Abriendo RViz con configuración: $RVIZ_CONFIG"
