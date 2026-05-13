@@ -146,7 +146,7 @@ wait "$CHILD_PID"
 ROS_PID=$!
 
 log "Esperando 5 segundos antes de abrir RViz."
-sleep 5
+sleep 10
 
 log "Arrancando motor RPLidar..."
 docker exec "$CONTAINER" bash -lc "source /opt/ros/humble/setup.bash && ros2 service call /start_motor std_srvs/srv/Empty" >>"$LAUNCHER_LOG" 2>&1 || true
@@ -154,15 +154,10 @@ log "Motor RPLidar lanzado."
 
 
 if [[ -f "$RVIZ_CONFIG" ]]; then
-  log "Abriendo RViz con configuración: $RVIZ_CONFIG"
-  (
-    set +u
-    source /opt/ros/humble/setup.bash
-    source "$HOME/agv_ws/install/setup.bash"
-    set -u
-    rviz2 -d "$RVIZ_CONFIG"
-  ) >>"$RUN_DIR/rviz.log" 2>&1 &
-  RVIZ_PID=$!
+  log "Abriendo RViz desde contenedor con X11..."
+  xhost +local:docker >>"$LAUNCHER_LOG" 2>&1 || true
+  docker exec -e DISPLAY="$DISPLAY" -e XAUTHORITY=/root/.Xauthority "$CONTAINER" bash -lc "source /opt/ros/humble/setup.bash && source /root/agv_ws/install/setup.bash && nohup rviz2 -d /root/agv_ws/src/rplidar_ros/rviz/rplidar_ros.rviz >/tmp/rviz.log 2>&1 &" >>"$LAUNCHER_LOG" 2>&1 || true
+  log "RViz lanzado desde contenedor."
 else
   log "WARN: No existe RVIZ_CONFIG: $RVIZ_CONFIG. RViz no se abrirá."
 fi
