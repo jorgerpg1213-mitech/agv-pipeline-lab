@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -u
 
-CONTAINER="ros_agv_serial"
+CONTAINER="agv_ros2_lab"
 YOLO_SCRIPT="$HOME/yolo_gst_csi.py"
 YOLO_VENV="$HOME/venvs/yolo_track"
 HOST_SHARE="$HOME/agv_share"
@@ -72,15 +72,15 @@ if ! docker ps >/dev/null 2>&1; then
   exit 1
 fi
 
-if [[ ! -f "$YOLO_SCRIPT" ]]; then
-  log "ERROR: No existe YOLO_SCRIPT: $YOLO_SCRIPT"
-  exit 1
-fi
-
-if [[ ! -d "$YOLO_VENV" ]]; then
-  log "ERROR: No existe YOLO_VENV: $YOLO_VENV"
-  exit 1
-fi
+#if [[ ! -f "$YOLO_SCRIPT" ]]; then
+#  log "ERROR: No existe YOLO_SCRIPT: $YOLO_SCRIPT"
+#  exit 1
+#fi
+#
+#if [[ ! -d "$YOLO_VENV" ]]; then
+#  log "ERROR: No existe YOLO_VENV: $YOLO_VENV"
+#  exit 1
+#fi
 
 if [[ ! -d "$HOST_SHARE" ]]; then
   log "ERROR: No existe HOST_SHARE: $HOST_SHARE"
@@ -96,31 +96,31 @@ docker start "$CONTAINER" >>"$LAUNCHER_LOG" 2>&1 || {
 log "Limpiando latest.json viejo si existe."
 rm -f "$JSON_FILE"
 
-log "Arrancando YOLO en host."
-(
-  cd "$YOLO_VENV" || exit 1
-  source bin/activate
-  python "$YOLO_SCRIPT"
-) >>"$YOLO_LOG" 2>&1 &
-YOLO_PID=$!
-
-log "Esperando latest.json fresco..."
-READY=0
-for i in {1..30}; do
-  if [[ -f "$JSON_FILE" ]]; then
-    AGE=$(( $(date +%s) - $(stat -c %Y "$JSON_FILE") ))
-    if [[ "$AGE" -le 2 ]]; then
-      READY=1
-      break
-    fi
-  fi
-  sleep 1
-done
-
-if [[ "$READY" -ne 1 ]]; then
-  log "ERROR: YOLO no generó latest.json fresco dentro del timeout."
-  exit 1
-fi
+#log "Arrancando YOLO en host."
+#(
+#  cd "$YOLO_VENV" || exit 1
+#  source bin/activate
+#  python "$YOLO_SCRIPT"
+#) >>"$YOLO_LOG" 2>&1 &
+#YOLO_PID=$!
+#
+#log "Esperando latest.json fresco..."
+#READY=0
+#for i in {1..30}; do
+#  if [[ -f "$JSON_FILE" ]]; then
+#    AGE=$(( $(date +%s) - $(stat -c %Y "$JSON_FILE") ))
+#    if [[ "$AGE" -le 2 ]]; then
+#      READY=1
+#      break
+#    fi
+#  fi
+#  sleep 1
+#done
+#
+#if [[ "$READY" -ne 1 ]]; then
+#  log "ERROR: YOLO no generó latest.json fresco dentro del timeout."
+#  exit 1
+#fi
 
 log "latest.json fresco detectado. Arrancando ROS superlauncher dentro de Docker."
 
@@ -130,7 +130,7 @@ setsid bash -c '\''
 echo $$ >/tmp/agv_ros_pgid
 source /opt/ros/humble/setup.bash
 source /root/agv_ws/install/setup.bash
-exec ros2 launch agv_bringup system_nav2_slam.launch.py
+ros2 launch agv_bringup system_nav2_slam.launch.py
 '\'' &
 CHILD_PID=$!
 wait "$CHILD_PID"
