@@ -33,13 +33,10 @@ cleanup() {
   log "Cierre solicitado. Deteniendo procesos..."
 
   log "Cerrando RViz si está activo."
-  if [[ -n "${RVIZ_PID:-}" ]] && kill -0 "$RVIZ_PID" 2>/dev/null; then
-    kill -TERM "$RVIZ_PID" 2>/dev/null || true
-    sleep 2
-    kill -KILL "$RVIZ_PID" 2>/dev/null || true
-    wait "$RVIZ_PID" 2>/dev/null || true
+  if [[ -n "${RVIZ_PID:-}" ]]; then
+    docker exec "$CONTAINER" bash -lc "kill -TERM $RVIZ_PID 2>/dev/null; sleep 2; kill -KILL $RVIZ_PID 2>/dev/null" 2>/dev/null || true
+    log "RViz detenido."
   fi
-  pkill -TERM -f "rviz2 -d $RVIZ_CONFIG" 2>/dev/null || true
 
   log "Cerrando YOLO si está activo."
   if [[ -n "${YOLO_PID:-}" ]] && kill -0 "$YOLO_PID" 2>/dev/null; then
@@ -156,8 +153,10 @@ log "Motor RPLidar lanzado."
 if [[ -f "$RVIZ_CONFIG" ]]; then
   log "Abriendo RViz desde contenedor con X11..."
   xhost +local:docker >>"$LAUNCHER_LOG" 2>&1 || true
-  docker exec -e DISPLAY="$DISPLAY" -e XAUTHORITY=/root/.Xauthority "$CONTAINER" bash -lc "source /opt/ros/humble/setup.bash && source /root/agv_ws/install/setup.bash && nohup rviz2 -d /root/agv_ws/src/rplidar_ros/rviz/rplidar_ros.rviz >/tmp/rviz.log 2>&1 &" >>"$LAUNCHER_LOG" 2>&1 || true
-  log "RViz lanzado desde contenedor."
+  docker exec -d -e DISPLAY="$DISPLAY" "$CONTAINER" bash -lc "source /opt/ros/humble/setup.bash && source /root/agv_ws/install/setup.bash && rviz2 -d /root/agv_ws/src/rplidar_ros/rviz/rplidar_ros.rviz"
+  sleep 3
+  RVIZ_PID=$(docker exec "$CONTAINER" pgrep -f rviz2 2>/dev/null || echo "")
+  log "RViz lanzado desde contenedor. PID=$RVIZ_PID"
 else
   log "WARN: No existe RVIZ_CONFIG: $RVIZ_CONFIG. RViz no se abrirá."
 fi
@@ -165,4 +164,8 @@ fi
 log "ROS superlauncher lanzado. PID ROS=$ROS_PID | PID YOLO=$YOLO_PID | PID RVIZ=$RVIZ_PID"
 log "Sistema vivo. Usa Ctrl+C para cerrar."
 
-wait "$ROS_PID"
+log "Monitoreando stack ROS..."
+while docker exec "$CONTAINER" bash -lc "test -f /tmp/agv_ros_pgid" 2>/dev/null; do
+  sleep 5
+done
+log "Stack ROS terminado."

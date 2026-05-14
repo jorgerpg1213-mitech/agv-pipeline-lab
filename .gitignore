@@ -1,16 +1,62 @@
+# ROS2 build artifacts
 build/
 install/
 log/
 
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
 
+# Editor / temporary files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Backup / temporary artifacts
 *.bak
 *.bak*
 *.save
-*.tar.gz
+*.tmp
 
+# ROS bag and databases
 *.db3
 *.bag
+*.mcap
 
+# System files
 .DS_Store
+Thumbs.db
+
+# Runtime logs
+*.log
+
+# Environment files
+.env
+
+# Docker temporary artifacts
+docker/*.cache
+
+# NVIDIA / TensorRT temporary artifacts
+*.engine
+
+# Colcon test artifacts
+test_results/
+
+# Generated maps temporary
+*.pgm~
+*.yaml~
+
+# Jetson / CUDA temporary
+.cuda/
+
+# Python virtual environments
+venv/
+.venv/
+
+# ROS generated message artifacts
+msg/_*.py
+srv/_*.py
+action/_*.py

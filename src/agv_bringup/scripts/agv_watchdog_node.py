@@ -21,12 +21,14 @@ class AgvWatchdogNode(Node):
 
         self.status_path = '/mnt/agv_share/agv_status.json'
 
+        self.enable_perception_watchdog = False
+
+
         self.thresholds = {
             'lidar': 5.0,
             'esp32_imu': 5.0,
             'odom': 5.0,
             'tf': 5.0,
-            'perception': 10.0,
         }
 
         self.fail_counts = {key: 0 for key in self.thresholds}
@@ -36,7 +38,9 @@ class AgvWatchdogNode(Node):
         self.create_subscription(Imu, '/imu', lambda msg: self.mark_seen('esp32_imu'), 10)
         self.create_subscription(Odometry, '/odom', lambda msg: self.mark_seen('odom'), 10)
         self.create_subscription(TFMessage, '/tf', lambda msg: self.mark_seen('tf'), 10)
-        self.create_subscription(DetectionArray, '/detections', lambda msg: self.mark_seen('perception'), 10)
+
+        if self.enable_perception_watchdog:
+            self.create_subscription(DetectionArray, '/detections', lambda msg: self.mark_seen('perception'), 10)
 
         self.timer = self.create_timer(1.0, self.evaluate)
 
@@ -112,10 +116,14 @@ class AgvWatchdogNode(Node):
 
     def write_status(self, payload):
         tmp_path = self.status_path + '.tmp'
+
+
         try:
             with open(tmp_path, 'w') as f:
                 json.dump(payload, f, indent=2)
             os.replace(tmp_path, self.status_path)
+
+
         except Exception as exc:
             self.get_logger().error(f'No se pudo escribir status JSON: {exc}')
 

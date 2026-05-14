@@ -148,7 +148,7 @@ def generate_launch_description():
         esp32_bridge,
         odom_node,
         ekf_node,
-        perception_node,
+        # perception_node,
         safety_policy_node,
         tf_base_footprint,
         tf_laser,
